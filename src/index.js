@@ -91,7 +91,8 @@ function calculate(historyArr, isPercent, isEqual) {
         const operation = historyArr[indx-1];
         const n = item;
         total = calculatePercent(x, operation, n);
-        }
+      }
+      
     }
     else if (indx - 2 >= 0) {
       const prevItem = historyArr[indx - 1];
