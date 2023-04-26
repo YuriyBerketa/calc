@@ -21,33 +21,35 @@ function operationTypeHandling(data) {
     tempNumber = tempNumber === '0' ? data : tempNumber + data;
   } else if (data === 'float') {
     operationType = 'number';
-    if (/\./.test(tempNumber)) {
-    } else if (tempNumber) {
+    if (!/\./.test(tempNumber)) {
+      if (tempNumber) {
       tempNumber = tempNumber + '.';
     } else {
       tempNumber = '0.';
     }
+    } 
   } else if (data === 'delete' && operationType === 'number') {
     tempNumber = tempNumber.substring(0, tempNumber.length - 1);
     tempNumber = tempNumber ? tempNumber : '0';
-  } else if (['+', '-', '*', '/', '%'].includes(data) && tempNumber) {
+  } else if (['+', '-', '*', '/'].includes(data) && tempNumber) {
     operationType = data;
     history.push(tempNumber, operationType);
     tempNumber = '';
+    // isPercent = false;
   } else if (data === 'clear') {
     history = [];
     tempNumber = '0';
+    // isPercent = false;
   } else if (data === '%') {
+    history.push(tempNumber);
       isPercent = true;
       isEqual = false;
-    history.push(tempNumber);
     tempNumber = calculate(history, isPercent, isEqual);
     history = [];
   } else if (data === '=') {
       history.push(tempNumber);
       isEqual = true;
-    //   isPercent = false;
-    tempNumber = calculate(history, isPercent, isEqual);
+      tempNumber = calculate(history, isPercent, isEqual);
       history = [];
       isPercent = false;
   }
@@ -83,8 +85,13 @@ function calculate(historyArr, isPercent, isEqual) {
     item = parseFloat(item);
     if (indx === 0) {
       total = item;
-    } else if (indx - 2 >= 0 && isPercent && indx === historyArr.length - 3) {
-        
+    } else if (indx - 2 >= 0 && isPercent && indx - 2 === historyArr.length - 3) {
+      if (!isEqual) {
+        const x = total;
+        const operation = historyArr[indx-1];
+        const n = item;
+        total = calculatePercent(x, operation, n);
+        }
     }
     else if (indx - 2 >= 0) {
       const prevItem = historyArr[indx - 1];
@@ -103,8 +110,20 @@ function calculate(historyArr, isPercent, isEqual) {
       }
     }
   });
+  // console.log(total);
   return total;
 }
 
 
 // логика процентов на калькуляторе
+
+function calculatePercent(x, operation, n) {
+  let total
+  if (['+', '-'].includes(operation)) {
+   total = x * (n / 100);
+  } else if (['*', '/'].includes(operation)) {
+    total = n / 100;
+  }
+  console.log(total);
+  return total;
+}
