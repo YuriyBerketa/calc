@@ -108,6 +108,7 @@ body {
   top: 16px;
   left: 16px;
 // outline: 1px solid red;
+
 cursor: pointer;
 }
 
@@ -117,9 +118,9 @@ fill: transparent;
 // margin-left: -20px;
 }
 .theme-night {
-//   fill: var(--display_dark);
+  fill: var(--display_light);
   margin-left: -20px;
-fill: transparent;
+// fill: transparent;
 }
 .theme_dark {
     // fill: var(--display_dark);

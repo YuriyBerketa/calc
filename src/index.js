@@ -162,7 +162,7 @@ theme.addEventListener('click', () => {
   if (theme.classList.contains('theme_dark')) {
     theme.classList.remove('theme_dark');
     nightFill.style.fill = '#fafafa';
-    dayFill.style.fill = '#00223A';
+    // dayFill.style.fill = '#00223A';
     calculator.classList.add('calculator_dark')
   } else {
     theme.classList.add('theme_dark');
