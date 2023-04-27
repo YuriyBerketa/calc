@@ -31,23 +31,25 @@ function operationTypeHandling(data) {
   } else if (data === 'delete' && operationType === 'number') {
     tempNumber = tempNumber.substring(0, tempNumber.length - 1);
     tempNumber = tempNumber ? tempNumber : '0';
+    isPercent = false;
   } else if (['+', '-', '*', '/'].includes(data) && tempNumber) {
     operationType = data;
     history.push(tempNumber, operationType);
     tempNumber = '';
-    // isPercent = false;
+    isPercent = false;
   } else if (data === 'clear') {
     history = [];
     tempNumber = '0';
-    // isPercent = false;
+    isPercent = false;
   } else if (data === '%') {
     history.push(tempNumber);
       isPercent = true;
       isEqual = false;
-    tempNumber = calculate(history, isPercent, isEqual);
-    history = [];
+      tempNumber = calculate(history, isPercent, isEqual);
   } else if (data === '=') {
+    if (!isPercent) {
       history.push(tempNumber);
+    }
       isEqual = true;
       tempNumber = calculate(history, isPercent, isEqual);
       history = [];
@@ -91,8 +93,13 @@ function calculate(historyArr, isPercent, isEqual) {
         const operation = historyArr[indx-1];
         const n = item;
         total = calculatePercent(x, operation, n);
+      } else {
+        const x = total;
+        const operation = historyArr[indx-1];
+        const n = item; 
+        total = calculatePercentWhenPuschEqual(x, operation, n);
+        console.log(x, operation, n)
       }
-      
     }
     else if (indx - 2 >= 0) {
       const prevItem = historyArr[indx - 1];
@@ -112,12 +119,12 @@ function calculate(historyArr, isPercent, isEqual) {
     }
   });
   // console.log(total);
-  return total;
+  return String(total);
 }
 
 
 // логика процентов на калькуляторе
-
+//пересчет процента при нажатии %
 function calculatePercent(x, operation, n) {
   let total
   if (['+', '-'].includes(operation)) {
@@ -128,3 +135,40 @@ function calculatePercent(x, operation, n) {
   console.log(total);
   return total;
 }
+
+//пересчет % при нажатии на =, после нажатия %
+function calculatePercentWhenPuschEqual(x, operation, n) {
+  let total = 0;
+  console.log(x, operation, n)
+  if (operation === '+') {
+    total = x + (n / 100 * x);
+  } else if (operation === '-') {
+    total = x - (n / 100 * x);
+  } else if(operation === '*') {
+    total = x * (n / 100);
+    console.log(total)
+  }
+  console.log(total)
+  return total
+}
+
+//переключение темі
+const dayFill = document.querySelector('.theme-day');
+const nightFill = document.querySelector('.theme-night');
+
+
+const theme = document.querySelector('.theme');
+theme.addEventListener('click', () => {
+  if (theme.classList.contains('theme_dark')) {
+    theme.classList.remove('theme_dark');
+    nightFill.style.fill = '#fafafa';
+    dayFill.style.fill = '#00223A';
+    calculator.classList.add('calculator_dark')
+  } else {
+    theme.classList.add('theme_dark');
+    calculator.classList.remove('calculator_dark')
+    nightFill.style.fill = 'transparent';
+    dayFill.style.fill = '#00223A';
+    // theme.style.fill = 'transparent';
+  }
+})
